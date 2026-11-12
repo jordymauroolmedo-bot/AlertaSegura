@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#6d28d9" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Alerta Segura" />
+  <title>Alerta Segura — Prevención de Ingeniería Social</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg" />
+  <link rel="apple-touch-icon" href="icons/icon-192.svg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: linear-gradient(135deg, #ede9fe 0%, #e0f2fe 50%, #f3e8ff 100%); min-height: 100vh; }
+    .screen { display: none; animation: fadeIn 0.28s ease-out; }
+    .screen.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="flex justify-center items-start sm:py-6">
+
+  <!-- Contenedor tipo App Móvil -->
+  <div class="w-full max-w-md bg-slate-50 sm:rounded-[2.2rem] shadow-2xl overflow-hidden min-h-screen sm:min-h-[820px] sm:max-h-[860px] flex flex-col relative border border-purple-100">
+
+    <!-- Barra Superior -->
+    <header class="bg-gradient-to-r from-violet-700 via-purple-600 to-sky-600 text-white px-5 pt-5 pb-4 shadow-md z-10">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center border border-white/25">
+            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="font-extrabold text-lg leading-tight tracking-tight">ALERTA SEGURA</h1>
+            <p class="text-[11px] text-sky-100 font-medium">Psicología & Ciberseguridad</p>
+          </div>
+        </div>
+        <button id="installBtn" onclick="installPWA()" class="hidden bg-white text-purple-700 text-xs font-bold px-3 py-1.5 rounded-full shadow hover:bg-purple-50 transition">
+          Instalar App
+        </button>
+      </div>
+    </header>
+
+    <!-- Área de Contenido Desplazable -->
+    <main class="flex-1 overflow-y-auto px-4 pt-4 pb-24 space-y-4 no-scrollbar" id="mainScroll">
+
+      <!-- ==================== PANTALLA 1: INICIO ==================== -->
+      <section id="screen-inicio" class="screen active space-y-4">
+        <!-- Hero Card -->
+        <div class="bg-gradient-to-br from-purple-700 via-indigo-700 to-sky-600 rounded-3xl p-5 text-white shadow-lg relative overflow-hidden">
+          <div class="relative z-10">
+            <span class="inline-block bg-white/20 text-[11px] font-semibold px-3 py-1 rounded-full mb-2">
+              Proyecto Universitario de Psicología
+            </span>
+            <h2 class="text-xl font-extrabold leading-snug mb-1">
+              ¡Hola, <span id="homeUserName">Estudiante</span>!
+            </h2>
+            <p class="text-sky-100 text-xs font-medium italic mb-3">
+              “Piensa antes de hacer clic. Protege tu información.”
+            </p>
+            <div class="bg-white/15 backdrop-blur-sm rounded-2xl p-3 text-xs leading-relaxed border border-white/20">
+              <strong>Tu seguridad comienza con una decisión informada.</strong> La ingeniería social no ataca sistemas informáticos, sino emociones humanas como el miedo, la urgencia y la confianza.
+            </div>
+          </div>
+        </div>
+
+        <!-- Accesos Directos -->
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5 px-1">Accesos Rápidos</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <button onclick="navigate('analizar')" class="glass-card p-4 rounded-2xl shadow-sm hover:shadow-md transition text-left border-l-4 border-l-purple-600">
+              <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center mb-2.5">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              </div>
+              <p class="font-bold text-slate-800 text-sm">Analizar Mensaje</p>
+              <p class="text-[11px] text-slate-500 mt-0.5">Detecta señales de estafa</p>
+            </button>
+
+            <button onclick="navigate('aprender'); switchLearnTab('tipos')" class="glass-card p-4 rounded-2xl shadow-sm hover:shadow-md transition text-left border-l-4 border-l-sky-500">
+              <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center mb-2.5">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 14v-4m0-4h.01"/></svg>
+              </div>
+              <p class="font-bold text-slate-800 text-sm">Ingeniería Social</p>
+              <p class="text-[11px] text-slate-500 mt-0.5">Phishing, Smishing, Vishing</p>
+            </button>
+
+            <button onclick="navigate('aprender'); switchLearnTab('psicologia')" class="glass-card p-4 rounded-2xl shadow-sm hover:shadow-md transition text-left border-l-4 border-l-indigo-500">
+              <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center mb-2.5">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.54Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.54Z"/></svg>
+              </div>
+              <p class="font-bold text-slate-800 text-sm">Psicología del Engaño</p>
+              <p class="text-[11px] text-slate-500 mt-0.5">Emociones y sesgos</p>
+            </button>
+
+            <button onclick="navigate('test')" class="glass-card p-4 rounded-2xl shadow-sm hover:shadow-md transition text-left border-l-4 border-l-fuchsia-500">
+              <div class="w-10 h-10 rounded-xl bg-fuchsia-100 text-fuchsia-700 flex items-center justify-center mb-2.5">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <p class="font-bold text-slate-800 text-sm">Test Evaluativo</p>
+              <p class="text-[11px] text-slate-500 mt-0.5">10 preguntas interactivas</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- Simulaciones destacadas -->
+        <div class="glass-card rounded-2xl p-4 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-bold text-slate-800 text-sm">Entrenamiento Práctico</h3>
+            <span class="text-[11px] font-semibold text-purple-600 bg-purple-100 px-2.5 py-0.5 rounded-full">4 Casos</span>
+          </div>
+          <p class="text-xs text-slate-600 mb-3">Pon a prueba tu criterio frente a situaciones cotidianas de manipulación digital sin correr riesgos.</p>
+          <button onclick="navigate('aprender'); switchLearnTab('simulaciones')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-sky-600 text-white font-bold text-xs shadow hover:opacity-95 transition">
+            Iniciar Simulaciones Educativas
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================== PANTALLA 2: ANALIZAR ==================== -->
+      <section id="screen-analizar" class="screen space-y-4">
+        <div class="glass-card rounded-2xl p-4 shadow-sm">
+          <h2 class="font-extrabold text-slate-800 text-base mb-1">Analizador de Mensajes</h2>
+          <p class="text-xs text-slate-500 mb-3">Pega un mensaje de WhatsApp, SMS o correo electrónico para evaluar posibles gatillos psicológicos y señales de alerta.</p>
+
+          <!-- Ejemplos rápidos -->
+          <div class="flex gap-1.5 overflow-x-auto pb-2 mb-2 no-scrollbar">
+            <button onclick="fillSample(0)" class="shrink-0 text-[11px] bg-purple-100 text-purple-700 font-semibold px-2.5 py-1 rounded-lg hover:bg-purple-200">Ejemplo Banco</button>
+            <button onclick="fillSample(1)" class="shrink-0 text-[11px] bg-sky-100 text-sky-700 font-semibold px-2.5 py-1 rounded-lg hover:bg-sky-200">Ejemplo Premio</button>
+            <button onclick="fillSample(2)" class="shrink-0 text-[11px] bg-indigo-100 text-indigo-700 font-semibold px-2.5 py-1 rounded-lg hover:bg-indigo-200">Ejemplo Familiar</button>
+            <button onclick="fillSample(3)" class="shrink-0 text-[11px] bg-slate-200 text-slate-700 font-semibold px-2.5 py-1 rounded-lg hover:bg-slate-300">Mensaje Normal</button>
+          </div>
+
+          <textarea id="messageInput" rows="5" placeholder="Pega aquí el texto sospechoso..." class="w-full rounded-xl border border-slate-200 p-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"></textarea>
+
+          <p id="analyzerError" class="hidden text-xs text-red-600 font-semibold mt-1.5">Por favor, ingresa un mensaje de al menos 8 caracteres para analizar.</p>
+
+          <div class="flex gap-2 mt-3">
+            <button onclick="analyzeMessage()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-700 to-sky-600 text-white font-bold text-sm shadow hover:opacity-95 transition">
+              Analizar Mensaje
+            </button>
+            <button onclick="clearAnalyzer()" class="px-4 py-3 rounded-xl bg-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-300 transition">
+              Limpiar
+            </button>
+          </div>
+        </div>
+
+        <!-- Resultado del análisis -->
+        <div id="analysisResult" class="hidden space-y-3"></div>
+      </section>
+
+      <!-- ==================== PANTALLA 3: APRENDER ==================== -->
+      <section id="screen-aprender" class="screen space-y-4">
+        <!-- Sub-navegación de aprendizaje -->
+        <div class="grid grid-cols-4 gap-1 bg-purple-100/80 p-1 rounded-xl">
+          <button onclick="switchLearnTab('tipos')" id="tab-tipos" class="learn-tab py-2 rounded-lg text-[11px] font-bold bg-white text-purple-700 shadow-sm">Tipos</button>
+          <button onclick="switchLearnTab('psicologia')" id="tab-psicologia" class="learn-tab py-2 rounded-lg text-[11px] font-bold text-slate-600">Psicología</button>
+          <button onclick="switchLearnTab('simulaciones')" id="tab-simulaciones" class="learn-tab py-2 rounded-lg text-[11px] font-bold text-slate-600">Casos</button>
+          <button onclick="switchLearnTab('consejos')" id="tab-consejos" class="learn-tab py-2 rounded-lg text-[11px] font-bold text-slate-600">Consejos</button>
+        </div>
+
+        <!-- Sub-vista 1: Tipos de Ingeniería Social -->
+        <div id="learn-tipos" class="learn-panel space-y-3">
+          <div class="px-1">
+            <h2 class="font-extrabold text-slate-800 text-base">Tipos de Ingeniería Social</h2>
+            <p class="text-xs text-slate-500">Modalidades frecuentes de manipulación digital.</p>
+          </div>
+          <div id="socialTypesContainer" class="space-y-3"></div>
+        </div>
+
+        <!-- Sub-vista 2: Educación Psicológica -->
+        <div id="learn-psicologia" class="learn-panel hidden space-y-3">
+          <div class="px-1">
+            <h2 class="font-extrabold text-slate-800 text-base">Factores Psicológicos</h2>
+            <p class="text-xs text-slate-500">Cómo las emociones y procesos cognitivos influyen en nuestra vulnerabilidad.</p>
+          </div>
+          <div id="psychFactorsContainer" class="space-y-3"></div>
+        </div>
+
+        <!-- Sub-vista 3: Simulaciones Educativas -->
+        <div id="learn-simulaciones" class="learn-panel hidden space-y-3">
+          <div class="px-1">
+            <h2 class="font-extrabold text-slate-800 text-base">Simulaciones Educativas</h2>
+            <p class="text-xs text-slate-500">Elige la reacción más segura frente a cada escenario.</p>
+          </div>
+          <div id="simulationsContainer" class="space-y-4"></div>
+        </div>
+
+        <!-- Sub-vista 4: Consejos de Prevención -->
+        <div id="learn-consejos" class="learn-panel hidden space-y-3">
+          <div class="px-1 flex justify-between items-center">
+            <div>
+              <h2 class="font-extrabold text-slate-800 text-base">Consejos de Prevención</h2>
+              <p class="text-xs text-slate-500">Marca los hábitos que ya aplicas en tu vida digital.</p>
+            </div>
+            <span id="tipsCounterBadge" class="text-xs font-extrabold bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full">0/8</span>
+          </div>
+          <div id="tipsContainer" class="space-y-2.5"></div>
+        </div>
+      </section>
+
+      <!-- ==================== PANTALLA 4: TEST ==================== -->
+      <section id="screen-test" class="screen space-y-4">
+        <div class="glass-card rounded-2xl p-4 shadow-sm" id="quizContainer">
+          <!-- Contenido dinámico del cuestionario -->
+        </div>
+      </section>
+
+      <!-- ==================== PANTALLA 5: PERFIL ==================== -->
+      <section id="screen-perfil" class="screen space-y-4">
+        <div class="glass-card rounded-2xl p-5 shadow-sm text-center">
+          <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-sky-500 text-white flex items-center justify-center text-2xl font-extrabold shadow-md mb-2" id="profileAvatar">
+            E
+          </div>
+          <h2 class="font-extrabold text-slate-800 text-lg" id="profileNameDisplay">Estudiante</h2>
+          <p class="text-xs text-slate-500 mb-3">Perfil de Aprendizaje Local (Sin datos sensibles)</p>
+
+          <div class="flex gap-2 max-w-xs mx-auto">
+            <input type="text" id="nameInput" placeholder="Tu nombre o alias..." maxlength="24" class="flex-1 text-xs border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+            <button onclick="saveUserName()" class="bg-purple-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-purple-700">Guardar</button>
+          </div>
+        </div>
+
+        <!-- Progreso General -->
+        <div class="glass-card rounded-2xl p-4 shadow-sm space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-slate-700">Progreso General de Aprendizaje</span>
+            <span class="text-xs font-extrabold text-purple-700" id="overallProgressText">0%</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+            <div id="overallProgressBar" class="bg-gradient-to-r from-purple-600 to-sky-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 pt-2 text-center">
+            <div class="bg-purple-50 rounded-xl p-2.5">
+              <p class="text-lg font-extrabold text-purple-700" id="statQuizzes">0</p>
+              <p class="text-[10px] font-semibold text-slate-500">Tests hechos</p>
+            </div>
+            <div class="bg-sky-50 rounded-xl p-2.5">
+              <p class="text-lg font-extrabold text-sky-700" id="statBestScore">0/10</p>
+              <p class="text-[10px] font-semibold text-slate-500">Mejor puntaje</p>
+            </div>
+            <div class="bg-indigo-50 rounded-xl p-2.5">
+              <p class="text-lg font-extrabold text-indigo-700" id="statTips">0/8</p>
+              <p class="text-[10px] font-semibold text-slate-500">Consejos listos</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historial de puntajes -->
+        <div class="glass-card rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Historial de Evaluaciones</h3>
+            <button onclick="resetProgress()" class="text-[11px] text-red-500 font-semibold hover:underline">Reiniciar datos</button>
+          </div>
+          <div id="scoreHistoryList" class="space-y-2 text-xs text-slate-600">
+            <p class="text-slate-400 italic">Aún no has realizado ningún test.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Menú de Navegación Inferior -->
+    <nav class="bg-white border-t border-slate-200 px-2 py-2 flex justify-around items-center absolute bottom-0 w-full z-20">
+      <button onclick="navigate('inicio')" class="nav-btn flex flex-col items-center gap-0.5 text-purple-700 font-bold" data-target="inicio">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span class="text-[10px]">Inicio</span>
+      </button>
+      <button onclick="navigate('analizar')" class="nav-btn flex flex-col items-center gap-0.5 text-slate-400 font-medium" data-target="analizar">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span class="text-[10px]">Analizar</span>
+      </button>
+      <button onclick="navigate('aprender')" class="nav-btn flex flex-col items-center gap-0.5 text-slate-400 font-medium" data-target="aprender">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span class="text-[10px]">Aprender</span>
+      </button>
+      <button onclick="navigate('test')" class="nav-btn flex flex-col items-center gap-0.5 text-slate-400 font-medium" data-target="test">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span class="text-[10px]">Test</span>
+      </button>
+      <button onclick="navigate('perfil')" class="nav-btn flex flex-col items-center gap-0.5 text-slate-400 font-medium" data-target="perfil">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="text-[10px]">Perfil</span>
+      </button>
+    </nav>
+  </div>
+
+  <script>
+    // ==================== ESTADO LOCAL ====================
+    const STORAGE_KEY = 'alerta_segura_state_v1';
+    let appState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+      userName: 'Estudiante',
+      completedTips: [],
+      completedSims: [],
+      quizHistory: []
+    };
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      updateProfileUI();
+    }
+
+    // ==================== NAVEGACIÓN ====================
+    function navigate(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + screenId).classList.add('active');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (btn.dataset.target === screenId) {
+          btn.classList.remove('text-slate-400', 'font-medium');
+          btn.classList.add('text-purple-700', 'font-bold');
+        } else {
+          btn.classList.remove('text-purple-700', 'font-bold');
+          btn.classList.add('text-slate-400', 'font-medium');
+        }
+      });
+      document.getElementById('mainScroll').scrollTop = 0;
+    }
+
+    function switchLearnTab(tabId) {
+      document.querySelectorAll('.learn-panel').forEach(p => p.classList.add('hidden'));
+      document.getElementById('learn-' + tabId).classList.remove('hidden');
+
+      document.querySelectorAll('.learn-tab').forEach(t => {
+        t.classList.remove('bg-white', 'text-purple-700', 'shadow-sm');
+        t.classList.add('text-slate-600');
+      });
+      const activeTab = document.getElementById('tab-' + tabId);
+      activeTab.classList.add('bg-white', 'text-purple-700', 'shadow-sm');
+      activeTab.classList.remove('text-slate-600');
+    }
+
+    // ==================== ANALIZADOR DE MENSAJES ====================
+    const sampleMessages = [
+      "ALERTA BANCARIA: Su cuenta ha sido suspendida temporalmente por actividad inusual. Ingrese su contraseña y el código SMS de 6 dígitos en http://seguridad-banco-verificacion.xyz en menos de 2 horas para evitar el bloqueo definitivo.",
+      "¡FELICIDADES! Has sido seleccionado como ganador de un iPhone 16 Pro y $1,000 USD en nuestro sorteo aniversario. Reclama tu premio urgente haciendo clic aquí: http://premio-sorpresa-gratis.net",
+      "Hola, cambié de número de teléfono porque se me dañó el celular. Necesito que me hagas un favor urgente y me transfieras $150 ahora mismo, mañana sin falta te lo devuelvo.",
+      "Hola equipo, les recuerdo que mañana a las 10:00 AM tenemos la exposición del proyecto de Psicología en el aula 204. ¡Nos vemos allá!"
+    ];
+
+    function fillSample(idx) {
+      document.getElementById('messageInput').value = sampleMessages[idx];
+      document.getElementById('analyzerError').classList.add('hidden');
+    }
+
+    function clearAnalyzer() {
+      document.getElementById('messageInput').value = '';
+      document.getElementById('analysisResult').classList.add('hidden');
+      document.getElementById('analyzerError').classList.add('hidden');
+    }
+
+    function analyzeMessage() {
+      const text = document.getElementById('messageInput').value.trim();
+      const errorEl = document.getElementById('analyzerError');
+      const resultEl = document.getElementById('analysisResult');
+
+      if (text.length < 8) {
+        errorEl.classList.remove('hidden');
+        resultEl.classList.add('hidden');
+        return;
+      }
+      errorEl.classList.add('hidden');
+
+      const rules = [
+        {
+          label: "Solicitud de contraseñas o credenciales",
+          psych: "Apela a la obediencia ante una supuesta autoridad técnica.",
+          regex: /(contrase[ñn]a|clave|pin|usuario y clave|credenciales|password)/i,
+          weight: 3
+        },
+        {
+          label: "Solicitud de códigos de verificación (OTP / SMS)",
+          psych: "Busca eludir la autenticación en dos pasos mediante engaño rápido.",
+          regex: /(c[óo]digo|sms|6 d[íi]gitos|verificaci[óo]n|token|whatsapp web)/i,
+          weight: 3
+        },
+        {
+          label: "Generación de miedo o urgencia extrema",
+          psych: "El miedo y la prisa reducen el pensamiento analítico (Sistema 2) y provocan respuestas impulsivas.",
+          regex: /(urgente|inmediato|ahora mismo|menos de \d+ horas|hoy mismo|último aviso|expira)/i,
+          weight: 2
+        },
+        {
+          label: "Amenaza de bloqueo o suspensión de cuenta",
+          psych: "Explora la aversión a la pérdida para forzar acciones sin verificar.",
+          regex: /(bloquead[ao]|suspendid[ao]|cancelad[ao]|cerrar[áa]n|actividad inusual|riesgo)/i,
+          weight: 2
+        },
+        {
+          label: "Premios, bonos o regalos inesperados",
+          psych: "Activa la curiosidad y el sesgo de optimismo frente a recompensas irreales.",
+          regex: /(ganador|felicidades|premio|sorteo|regalo|bono|reclama tu)/i,
+          weight: 2
+        },
+        {
+          label: "Solicitud de dinero o transferencias",
+          psych: "Apela a la empatía, confianza o presión social.",
+          regex: /(transferencia|transfiere|dep[óo]sito|dinero|pr[ée]stame|pagar|yape|plin|bizum|\$\d+)/i,
+          weight: 3
+        },
+        {
+          label: "Enlace web externo o sospechoso",
+          psych: "Dirige hacia sitios falsificados (phishing) que imitan páginas reales.",
+          regex: /(https?:\/\/|www\.|\.xyz|\.top|\.net\/|bit\.ly|tinyurl)/i,
+          weight: 2
+        },
+        {
+          label: "Posible suplantación de identidad o institución",
+          psych: "Usa el principio de autoridad o cercanía afectiva para bajar las defensas.",
+          regex: /(banco|soporte t[ée]cnico|cambi[ée] de n[úu]mero|paqueter[íi]a|aduana|sunat|sat|polic[íi]a)/i,
+          weight: 2
+        }
+      ];
+
+      let score = 0;
+      let detected = [];
+
+      rules.forEach(r => {
+        if (r.regex.test(text)) {
+          score += r.weight;
+          detected.push(r);
+        }
+      });
+
+      let level, badgeColor, borderColor, summary, advice;
+
+      if (score === 0) {
+        level = "RIESGO BAJO";
+        badgeColor = "bg-emerald-100 text-emerald-800";
+        borderColor = "border-emerald-400";
+        summary = "No se identificaron señales comunes de ingeniería social en las palabras del mensaje.";
+        advice = "Aunque el texto parece habitual, mantén siempre una actitud preventiva si proviene de un remitente desconocido.";
+      } else if (score <= 4) {
+        level = "RIESGO MEDIO";
+        badgeColor = "bg-amber-100 text-amber-800";
+        borderColor = "border-amber-400";
+        summary = "Se encontraron algunas señales sospechosas que requieren precaución antes de actuar.";
+        advice = "No respondas de inmediato ni hagas clic en enlaces. Contacta al remitente o institución por un canal oficial independiente.";
+      } else {
+        level = "RIESGO ALTO";
+        badgeColor = "bg-rose-100 text-rose-800";
+        borderColor = "border-rose-500";
+        summary = "Se detectaron múltiples indicadores típicos de manipulación psicológica y posible estafa.";
+        advice = "No compartas códigos, contraseñas ni dinero. No abras ningún enlace. Bloquea y reporta el remitente.";
+      }
+
+      const signalsHtml = detected.length > 0
+        ? detected.map(d => `
+            <li class="bg-white p-2.5 rounded-xl border border-slate-100">
+              <p class="font-bold text-slate-800 text-xs">• ${d.label}</p>
+              <p class="text-[11px] text-purple-700 mt-0.5">Enfoque psicológico: ${d.psych}</p>
+            </li>
+          `).join('')
+        : `<li class="text-xs text-slate-600">No se detectaron patrones lingüísticos de alarma.</li>`;
+
+      resultEl.innerHTML = `
+        <div class="glass-card rounded-2xl p-4 shadow-sm border-l-4 ${borderColor} space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-500 uppercase">Resultado del Análisis</span>
+            <span class="px-3 py-1 rounded-full text-xs font-extrabold ${badgeColor}">${level}</span>
+          </div>
+          <p class="text-xs text-slate-700 font-medium">${summary}</p>
+          <div>
+            <p class="text-xs font-bold text-slate-800 mb-1.5">Señales detectadas:</p>
+            <ul class="space-y-1.5">${signalsHtml}</ul>
+          </div>
+          <div class="bg-sky-50 p-3 rounded-xl border border-sky-100">
+            <p class="text-xs font-bold text-sky-900">Recomendación:</p>
+            <p class="text-xs text-sky-800 mt-0.5">${advice}</p>
+          </div>
+          <p class="text-[11px] text-slate-500 italic bg-slate-100 p-2.5 rounded-xl">
+            <strong>Aviso importante:</strong> Esta herramienta realiza una evaluación orientativa basada en patrones de texto y psicología de la persuasión; no garantiza al 100% que un mensaje sea seguro o fraudulento.
+          </p>
+        </div>
+      `;
+      resultEl.classList.remove('hidden');
+    }
+
+    // ==================== CONTENIDO EDUCATIVO ====================
+    const socialTypesData = [
+      {
+        title: "Phishing (Correos y Webs Falsas)",
+        def: "Engaño mediante correos electrónicos o mensajes que imitan instituciones legítimas para robar contraseñas o datos bancarios.",
+        example: "“Estimado cliente, detectamos un acceso no autorizado. Valide su identidad aquí en 24 horas.”",
+        alert: "Remitente con dominio extraño, saludos genéricos y enlaces que imitan páginas oficiales.",
+        tip: "Escribe tú mismo la dirección oficial en el navegador; nunca entres desde enlaces de correos."
+      },
+      {
+        title: "Smishing (Mensajes SMS Fraudulentos)",
+        def: "Variante del phishing realizada a través de mensajes de texto SMS con enlaces maliciosos o números falsos.",
+        example: "“Su paquete no pudo ser entregado por dirección incorrecta. Actualice sus datos en: http://envio-express.top”",
+        alert: "Enlaces acortados, cobros mínimos inesperados y sensación de urgencia.",
+        tip: "Verifica el estado de tus pedidos únicamente en la aplicación o web oficial de la empresa."
+      },
+      {
+        title: "Vishing (Llamadas Telefónicas Engañosas)",
+        def: "Manipulación verbal por llamada telefónica donde el atacante finge ser ejecutivo bancario, soporte técnico o autoridad.",
+        example: "“Le llamamos del área de fraudes de su banco; dígame el código que acaba de llegar a su celular para cancelar una compra.”",
+        alert: "Presión verbal, ruido de call center de fondo y solicitud de códigos SMS o claves.",
+        tip: "Cuelga inmediatamente y llama al número oficial que figura al reverso de tu tarjeta."
+      },
+      {
+        title: "Suplantación de Identidad",
+        def: "El atacante se hace pasar por un familiar, amigo, docente o jefe para solicitar favores económicos o información privada.",
+        example: "“Hola, perdí mi teléfono y este es mi nuevo número. ¿Me puedes prestar dinero urgente para una emergencia?”",
+        alert: "Excusas para no hablar por llamada de voz y pedidos rápidos de transferencias.",
+        tip: "Confirma la identidad llamando al número antiguo de esa persona o haciendo una pregunta que solo ambos sepan."
+      }
+    ];
+
+    const psychFactorsData = [
+      { name: "Miedo", desc: "El temor a perder dinero, cuentas o sufrir sanciones bloquea el razonamiento crítico y activa respuestas defensivas impulsivas." },
+      { name: "Confianza", desc: "Tendemos a creer en mensajes que usan logos conocidos o nombres de personas cercanas, bajando nuestras barreras de verificación." },
+      { name: "Curiosidad", desc: "El deseo de saber quién envió una foto, un premio o un rumor lleva a hacer clic sin evaluar el riesgo." },
+      { name: "Presión Social", desc: "El impulso de complacer a figuras de autoridad (jefes, docentes, bancos) dificulta cuestionar solicitudes inusuales." },
+      { name: "Urgencia", desc: "Los límites de tiempo artificiales ('en 10 minutos') impiden consultar con otras personas o analizar detalles." },
+      { name: "Atención", desc: "Cuando estamos distraídos o realizando múltiples tareas, pasamos por alto errores ortográficos o URLs falsas." },
+      { name: "Percepción", desc: "Los atacantes replican colores y tipografías oficiales para que nuestro cerebro perciba el entorno como familiar y seguro." },
+      { name: "Toma de Decisiones", desc: "Bajo estrés emocional predominan los atajos mentales (heurísticos) sobre el análisis lógico y pausado." }
+    ];
+
+    const simulationsData = [
+      {
+        id: "sim1",
+        scenario: "Recibes un SMS: 'Tu cuenta bancaria será bloqueada hoy por falta de actualización. Ingresa aquí para evitarlo'.",
+        options: [
+          { text: "Entro rápido al enlace e ingreso mis datos antes de que la bloqueen.", correct: false, feedback: "Incorrecto. El atacante usa el miedo y la urgencia para que entregues tus credenciales en una web falsa." },
+          { text: "Ignoro el enlace, abro la app oficial de mi banco o llamo a su línea oficial.", correct: true, feedback: "¡Excelente! Verificar por canales oficiales neutraliza la manipulación emocional." },
+          { text: "Respondo el SMS pidiendo que no me bloqueen.", correct: false, feedback: "No es recomendable responder a números sospechosos; confirma que tu línea está activa." }
+        ]
+      },
+      {
+        id: "sim2",
+        scenario: "Recibes una llamada de alguien que dice ser del banco y te pide un código de 6 dígitos que llegó a tu celular para cancelar un supuesto fraude.",
+        options: [
+          { text: "Le dicto el código rápido para que cancele el fraude.", correct: false, feedback: "Cuidado: ese código es tu llave de seguridad (2FA) y sirve para autorizar transacciones o robar tu cuenta." },
+          { text: "Cuelgo la llamada y nunca comparto códigos recibidos por SMS.", correct: true, feedback: "¡Correcto! Ningún banco legítimo solicita códigos de verificación por teléfono." },
+          { text: "Le pido su nombre completo y si me lo da, le entrego el código.", correct: false, feedback: "Un estafador puede inventar cualquier nombre. Nunca entregues códigos de seguridad." }
+        ]
+      },
+      {
+        id: "sim3",
+        scenario: "Un número desconocido en WhatsApp te escribe con la foto de un familiar diciendo que cambió de celular y necesita una transferencia urgente.",
+        options: [
+          { text: "Hago la transferencia de inmediato para ayudarle.", correct: false, feedback: "Incorrecto. Es una suplantación clásica que explota la empatía y la urgencia." },
+          { text: "Llamo al número habitual de mi familiar o solicito una nota de voz/videollamada para confirmar.", correct: true, feedback: "¡Muy bien! Validar la identidad por otro medio evita caer en suplantaciones." },
+          { text: "Le transfiero la mitad del dinero por si acaso.", correct: false, feedback: "Incluso enviar una parte implica caer en la estafa. Verifica primero." }
+        ]
+      },
+      {
+        id: "sim4",
+        scenario: "Llega un correo anunciando que ganaste un viaje internacional sin haber participado en ningún sorteo, pidiendo llenar un formulario con tus datos.",
+        options: [
+          { text: "Lleno el formulario porque no pierdo nada con intentar.", correct: false, feedback: "Sí pierdes: entregas datos personales valiosos que se usan para robo de identidad o futuros ataques." },
+          { text: "Desconfío, elimino el correo y lo marco como spam/phishing.", correct: true, feedback: "¡Exacto! Las recompensas inesperadas buscan activar la curiosidad y el sesgo de optimismo." },
+          { text: "Reenvío el correo a mis amigos para que también participen.", correct: false, feedback: "Reenviar enlaces sospechosos pone en riesgo a tus contactos." }
+        ]
+      }
+    ];
+
+    const preventionTipsData = [
+      "Utilizar contraseñas seguras y diferentes para cada cuenta.",
+      "Activar la verificación en dos pasos (2FA) en correo, redes y bancos.",
+      "No compartir códigos de seguridad ni claves con nadie.",
+      "Verificar la identidad de los remitentes antes de responder.",
+      "Evitar abrir enlaces desconocidos o acortados.",
+      "Consultar siempre las páginas y aplicaciones oficiales.",
+      "Reportar y bloquear mensajes o llamadas sospechosas.",
+      "Pensar y respirar unos segundos antes de responder mensajes urgentes."
+    ];
+
+    function renderLearnContent() {
+      document.getElementById('socialTypesContainer').innerHTML = socialTypesData.map(item => `
+        <div class="glass-card rounded-2xl p-4 shadow-sm space-y-2 border-l-4 border-l-purple-600">
+          <h3 class="font-bold text-slate-800 text-sm">${item.title}</h3>
+          <p class="text-xs text-slate-600">${item.def}</p>
+          <div class="bg-purple-50 p-2.5 rounded-xl text-[11px] text-purple-900 italic">
+            <strong>Ejemplo:</strong> ${item.example}
+          </div>
+          <p class="text-[11px] text-rose-700"><strong>Señal de alerta:</strong> ${item.alert}</p>
+          <p class="text-[11px] text-emerald-700"><strong>Prevención:</strong> ${item.tip}</p>
+        </div>
+      `).join('');
+
+      document.getElementById('psychFactorsContainer').innerHTML = psychFactorsData.map(f => `
+        <div class="glass-card rounded-2xl p-3.5 shadow-sm flex gap-3 items-start">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-sky-500 text-white font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">
+            ${f.name[0]}
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800 text-sm">${f.name}</h3>
+            <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">${f.desc}</p>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('simulationsContainer').innerHTML = simulationsData.map((sim, sIdx) => `
+        <div class="glass-card rounded-2xl p-4 shadow-sm space-y-2.5">
+          <span class="text-[10px] font-extrabold uppercase tracking-wider bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full">Caso #${sIdx + 1}</span>
+          <p class="text-xs font-semibold text-slate-800 leading-relaxed">${sim.scenario}</p>
+          <div class="space-y-1.5">
+            ${sim.options.map((opt, oIdx) => `
+              <button onclick="answerSimulation(${sIdx}, ${oIdx})" class="w-full text-left text-xs p-2.5 rounded-xl border border-slate-200 bg-white hover:border-purple-400 transition">
+                ${opt.text}
+              </button>
+            `).join('')}
+          </div>
+          <div id="sim-feedback-${sIdx}" class="hidden text-xs p-3 rounded-xl font-medium"></div>
+        </div>
+      `).join('');
+
+      renderTipsList();
+    }
+
+    function answerSimulation(sIdx, oIdx) {
+      const sim = simulationsData[sIdx];
+      const opt = sim.options[oIdx];
+      const fbEl = document.getElementById('sim-feedback-' + sIdx);
+      fbEl.textContent = opt.feedback;
+      fbEl.className = `text-xs p-3 rounded-xl font-medium ${opt.correct ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}`;
+      fbEl.classList.remove('hidden');
+
+      if (opt.correct && !appState.completedSims.includes(sim.id)) {
+        appState.completedSims.push(sim.id);
+        saveState();
+      }
+    }
+
+    function renderTipsList() {
+      document.getElementById('tipsCounterBadge').textContent = `${appState.completedTips.length}/${preventionTipsData.length}`;
+      document.getElementById('tipsContainer').innerHTML = preventionTipsData.map((tip, idx) => {
+        const checked = appState.completedTips.includes(idx);
+        return `
+          <button onclick="toggleTip(${idx})" class="w-full glass-card p-3.5 rounded-2xl shadow-sm flex items-center gap-3 text-left transition ${checked ? 'border-emerald-400 bg-emerald-50/70' : ''}">
+            <div class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 border ${checked ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 bg-white'}">
+              ${checked ? '✓' : ''}
+            </div>
+            <span class="text-xs font-medium ${checked ? 'text-emerald-950 font-semibold' : 'text-slate-700'}">${tip}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleTip(idx) {
+      if (appState.completedTips.includes(idx)) {
+        appState.completedTips = appState.completedTips.filter(i => i !== idx);
+      } else {
+        appState.completedTips.push(idx);
+      }
+      renderTipsList();
+      saveState();
+    }
+
+    // ==================== CUESTIONARIO (10 PREGUNTAS) ====================
+    const quizQuestions = [
+      {
+        q: "1. ¿Qué es principalmente la ingeniería social en el ámbito digital?",
+        options: [
+          "Un virus que daña físicamente la batería del celular.",
+          "La manipulación psicológica para que las personas entreguen información o realicen acciones inseguras.",
+          "Un programa antivirus gratuito."
+        ],
+        correct: 1,
+        explanation: "La ingeniería social explota emociones y sesgos humanos más que fallos técnicos."
+      },
+      {
+        q: "2. ¿Qué emoción suelen provocar los mensajes falsos de 'cuenta bloqueada'?",
+        options: [
+          "Miedo y urgencia para evitar el pensamiento analítico.",
+          "Aburrimiento y sueño.",
+          "Relajación y confianza plena."
+        ],
+        correct: 0,
+        explanation: "El miedo y la urgencia inducen respuestas rápidas sin verificar la fuente."
+      },
+      {
+        q: "3. ¿Cómo se llama el engaño realizado mediante mensajes de texto SMS?",
+        options: ["Vishing", "Smishing", "Backup"],
+        correct: 1,
+        explanation: "El Smishing combina SMS + Phishing."
+      },
+      {
+        q: "4. Un supuesto agente bancario te llama y pide el código de 6 dígitos que llegó a tu SMS. ¿Qué debes hacer?",
+        options: [
+          "Dictárselo para que proteja mi cuenta.",
+          "Colgar inmediatamente y no compartir ningún código.",
+          "Pedirle que me envíe un correo y luego dárselo."
+        ],
+        correct: 1,
+        explanation: "Los códigos de verificación son personales; entregarlos permite el robo de cuentas."
+      },
+      {
+        q: "5. ¿Qué modalidad utiliza llamadas telefónicas para engañar a la víctima?",
+        options: ["Vishing", "Streaming", "Cookies"],
+        correct: 0,
+        explanation: "El Vishing (Voice Phishing) ocurre mediante llamadas de voz."
+      },
+      {
+        q: "6. ¿Por qué funciona el sesgo de autoridad en la ingeniería social?",
+        options: [
+          "Porque las personas suelen obedecer sin cuestionar cuando creen hablar con un banco, jefe o institución.",
+          "Porque los celulares bloquean las llamadas de desconocidos.",
+          "Porque las contraseñas caducan cada día."
+        ],
+        correct: 0,
+        explanation: "La autoridad percibida reduce la tendencia a verificar la legitimidad de una orden."
+      },
+      {
+        q: "7. ¿Cuál es la forma más segura de entrar a la web de tu banco?",
+        options: [
+          "Hacer clic en el enlace de un correo promocional.",
+          "Escribir directamente la dirección oficial en el navegador o usar la app oficial.",
+          "Buscar el enlace en comentarios de redes sociales."
+        ],
+        correct: 1,
+        explanation: "Acceder directamente evita caer en páginas clonadas (phishing)."
+      },
+      {
+        q: "8. ¿Qué medida protege tu cuenta incluso si alguien descubre tu contraseña?",
+        options: [
+          "Usar el mismo nombre de usuario en todas partes.",
+          "Activar la verificación en dos pasos (2FA).",
+          "Guardar la contraseña en una nota pública."
+        ],
+        correct: 1,
+        explanation: "La verificación en dos pasos añade una segunda barrera de seguridad."
+      },
+      {
+        q: "9. Un familiar te escribe desde un número nuevo pidiendo dinero urgente. ¿Qué es lo más prudente?",
+        options: [
+          "Transferir rápido para no quedar mal.",
+          "Verificar su identidad llamando a su número anterior o haciendo videollamada.",
+          "Enviar solo la mitad del dinero."
+        ],
+        correct: 1,
+        explanation: "La suplantación de identidad en mensajería se detecta verificando por otro canal."
+      },
+      {
+        q: "10. ¿Cuál es la regla de oro frente a mensajes alarmantes o premios inesperados?",
+        options: [
+          "Reenviarlos a todos tus contactos.",
+          "Detenerse, pensar antes de hacer clic y verificar en fuentes oficiales.",
+          "Ingresar datos básicos para comprobar si es verdad."
+        ],
+        correct: 1,
+        explanation: "Pausar la reacción emocional permite tomar decisiones informadas."
+      }
+    ];
+
+    let quizState = { index: 0, score: 0, answered: false };
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+
+      if (quizState.index >= quizQuestions.length) {
+        const finalScore = quizState.score;
+        let levelMsg, badgeClass;
+        if (finalScore >= 8) {
+          levelMsg = "¡Excelente nivel de prevención! Reconoces con claridad las tácticas de manipulación psicológica.";
+          badgeClass = "bg-emerald-100 text-emerald-800";
+        } else if (finalScore >= 5) {
+          levelMsg = "Buen avance, pero aún puedes reforzar hábitos de verificación antes de actuar ante mensajes urgentes.";
+          badgeClass = "bg-amber-100 text-amber-800";
+        } else {
+          levelMsg = "Te recomendamos repasar los módulos de Psicología y Tipos de Ingeniería Social para fortalecer tus defensas.";
+          badgeClass = "bg-rose-100 text-rose-800";
+        }
+
+        container.innerHTML = `
+          <div class="text-center space-y-3 py-2">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-extrabold ${badgeClass}">Test Completado</span>
+            <h2 class="text-2xl font-extrabold text-slate-800">Puntaje: ${finalScore} / ${quizQuestions.length}</h2>
+            <p class="text-xs text-slate-600 leading-relaxed">${levelMsg}</p>
+            <button onclick="restartQuiz()" class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-700 to-sky-600 text-white font-bold text-sm shadow">
+              Volver a intentar el Test
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const current = quizQuestions[quizState.index];
+      container.innerHTML = `
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-purple-700">Pregunta ${quizState.index + 1} de ${quizQuestions.length}</span>
+            <span class="text-xs font-semibold text-slate-500">Puntos: ${quizState.score}</span>
+          </div>
+          <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-purple-600 h-1.5 transition-all" style="width: ${((quizState.index + 1) / quizQuestions.length) * 100}%"></div>
+          </div>
+          <h3 class="font-bold text-slate-800 text-sm leading-snug pt-1">${current.q}</h3>
+          <div class="space-y-2" id="quizOptions">
+            ${current.options.map((opt, idx) => `
+              <button onclick="selectQuizOption(${idx})" class="quiz-opt w-full text-left text-xs p-3 rounded-xl border border-slate-200 bg-white hover:border-purple-400 transition font-medium text-slate-700">
+                ${opt}
+              </button>
+            `).join('')}
+          </div>
+          <div id="quizFeedback" class="hidden p-3 rounded-xl text-xs"></div>
+          <button id="nextQuizBtn" onclick="nextQuizQuestion()" class="hidden w-full py-2.5 rounded-xl bg-purple-700 text-white font-bold text-xs">
+            Siguiente Pregunta
+          </button>
+        </div>
+      `;
+    }
+
+    function selectQuizOption(selectedIdx) {
+      if (quizState.answered) return;
+      quizState.answered = true;
+
+      const current = quizQuestions[quizState.index];
+      const isCorrect = selectedIdx === current.correct;
+      if (isCorrect) quizState.score++;
+
+      const buttons = document.querySelectorAll('.quiz-opt');
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === current.correct) {
+          btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-950', 'font-bold');
+        } else if (idx === selectedIdx && !isCorrect) {
+          btn.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-950');
+        }
+      });
+
+      const fb = document.getElementById('quizFeedback');
+      fb.innerHTML = `<strong>${isCorrect ? '¡Correcto!' : 'Respuesta incorrecta.'}</strong> ${current.explanation}`;
+      fb.className = `p-3 rounded-xl text-xs ${isCorrect ? 'bg-emerald-50 text-emerald-900 border border-emerald-200' : 'bg-rose-50 text-rose-900 border border-rose-200'}`;
+      fb.classList.remove('hidden');
+
+      const nextBtn = document.getElementById('nextQuizBtn');
+      nextBtn.textContent = quizState.index === quizQuestions.length - 1 ? 'Ver Resultado Final' : 'Siguiente Pregunta';
+      nextBtn.classList.remove('hidden');
+    }
+
+    function nextQuizQuestion() {
+      quizState.index++;
+      quizState.answered = false;
+      if (quizState.index >= quizQuestions.length) {
+        const now = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+        appState.quizHistory.unshift({ score: quizState.score, total: quizQuestions.length, date: now });
+        saveState();
+      }
+      renderQuiz();
+    }
+
+    function restartQuiz() {
+      quizState = { index: 0, score: 0, answered: false };
+      renderQuiz();
+    }
+
+    // ==================== PERFIL Y PROGRESO ====================
+    function saveUserName() {
+      const val = document.getElementById('nameInput').value.trim();
+      if (!val) return;
+      appState.userName = val;
+      document.getElementById('nameInput').value = '';
+      saveState();
+    }
+
+    function updateProfileUI() {
+      const name = appState.userName || 'Estudiante';
+      document.getElementById('homeUserName').textContent = name;
+      document.getElementById('profileNameDisplay').textContent = name;
+      document.getElementById('profileAvatar').textContent = name[0].toUpperCase();
+
+      const quizzesCount = appState.quizHistory.length;
+      const bestScore = quizzesCount > 0 ? Math.max(...appState.quizHistory.map(q => q.score)) : 0;
+      const tipsCount = appState.completedTips.length;
+      const simsCount = appState.completedSims.length;
+
+      // Progreso ponderado: 40% consejos, 30% simulaciones, 30% mejor test
+      const progress = Math.round(
+        ((tipsCount / preventionTipsData.length) * 40) +
+        ((simsCount / simulationsData.length) * 30) +
+        ((bestScore / quizQuestions.length) * 30)
+      );
+
+      document.getElementById('overallProgressText').textContent = `${progress}%`;
+      document.getElementById('overallProgressBar').style.width = `${progress}%`;
+      document.getElementById('statQuizzes').textContent = quizzesCount;
+      document.getElementById('statBestScore').textContent = `${bestScore}/10`;
+      document.getElementById('statTips').textContent = `${tipsCount}/8`;
+
+      const historyEl = document.getElementById('scoreHistoryList');
+      if (quizzesCount === 0) {
+        historyEl.innerHTML = `<p class="text-slate-400 italic">Aún no has realizado ningún test.</p>`;
+      } else {
+        historyEl.innerHTML = appState.quizHistory.slice(0, 5).map(item => `
+          <div class="flex justify-between items-center bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">
+            <span class="font-semibold text-slate-700">${item.date}</span>
+            <span class="font-extrabold text-purple-700">${item.score}/${item.total} pts</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function resetProgress() {
+      if (!confirm("¿Deseas reiniciar tu progreso local de aprendizaje?")) return;
+      appState = { userName: 'Estudiante', completedTips: [], completedSims: [], quizHistory: [] };
+      saveState();
+      renderTipsList();
+      restartQuiz();
+    }
+
+    // ==================== PWA SERVICE WORKER & INSTALACIÓN ====================
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBtn').classList.remove('hidden');
+    });
+
+    async function installPWA() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      document.getElementById('installBtn').classList.add('hidden');
+    }
+
+    // Inicialización
+    renderLearnContent();
+    renderQuiz();
+    updateProfileUI();
+  </script>
+</body>
+</html>
